@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Job title bullet points</title>
+
+    <style>
+      body {
+        font-family: "Times New Roman", Times, serif;
+        font-size: 18pt;
+        color: #333333;
+        background-color: #fefefe;
+        margin: 40px auto;
+        max-width: 640px;
+      }
+
+      div {
+        margin-top: 40px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>Job Title Bullet Points</h1>
+
+    <p>
+      Type a job title in the input box to recieve some bullet points for that
+      title.
+    </p>
+
+    <input type="text" id="inputBox" placeholder="Type job title here" />
+    <button type="button" id="submitButton">Submit</button>
+
+    <div id="queries"></div>
+
+    <!-- script tag contains JavaScript that interacts with page elements -->
+    <script>
+      // Set a listener function for the button click
+      document.getElementById("submitButton").onclick = function () {
+        // Get the current string in the text box
+        var input = document.getElementById("inputBox").value;
+
+        var oReq = new XMLHttpRequest();
+        oReq.addEventListener("load", responseListener);
+        oReq.open("GET", "/search?word=" + input);
+        oReq.send();
+      };
+
+      function responseListener() {
+        // contains all of the responses for each searched job title
+        const output = document.getElementById("queries");
+
+        // create a new div to hold the name of the searched job title and its bullet points
+        let job = document.createElement("div");
+
+        // create a list to hold the bullet points for each job title
+        let jobPoints = document.createElement("ul");
+
+        // add the name of the job title to outpput
+        job.innerHTML +=
+          document.getElementById("inputBox").value + " bullet points";
+
+        let data = JSON.parse(this.responseText);
+
+        data = data.replace(/(\r\n|\n|\r)/gm, ""); // remove any breaking characters using regex
+
+        // parse the response from the API, which should be in csv form
+        points = data.split(",");
+
+        // for each bullet point, append the content of that point to a new list item
+        points.forEach((point) => {
+          let jobPoint = document.createElement("li");
+          jobPoint.textContent = point;
+          jobPoints.appendChild(jobPoint);
+        });
+
+        job.appendChild(list);
+        output.appendChild(job);
+
+        job.style.border = "solid";
+        job.style.borderRadius = "30px";
+      }
+    </script>
+  </body>
+</html>
